@@ -117,9 +117,8 @@ public class SMSReceiver extends BroadcastReceiver {
             case "신한":
                 Log.d(TAG, "신한");
                 content = messageList.get(6);
-                if (messageList.size() > 6)
+                if (messageList.size() > 7)
                     content = content+" "+messageList.get(7);
-                    // Log.d(TAG, content+" "+messageList.get(7));
                 Log.d(TAG, content);
                 break;
             case "NH":

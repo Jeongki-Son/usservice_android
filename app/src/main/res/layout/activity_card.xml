@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.seoultechus.us.usservice.CardActivity">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/view"
+        android:orientation="vertical">
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_below="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="24dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="18dp">
+                <EditText
+                    android:id="@+id/card_company"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:paddingLeft="24dp"
+                    android:layout_marginBottom="6dp"
+                    android:hint="카드사"
+                    android:lines="1"
+                    android:maxLength="10"
+                    android:background="@color/colorPrimary"/>
+                <EditText
+                    android:id="@+id/card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:paddingLeft="24dp"
+                    android:layout_marginBottom="6dp"
+                    android:hint="카드번호 맨 뒷자리 4개"
+                    android:lines="1"
+                    android:maxLength="4"
+                    android:background="@color/colorPrimary"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:paddingLeft="36dp"
+                    android:paddingRight="36dp"
+                    android:textAlignment="center"
+                    android:text="자동입력을 가능하게 하는 부분입니다.\n 정확하게 입력해 주세요."/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="등록 완료"
+                android:textSize="16dp"
+                android:textColor="@color/colorPrimary"
+                android:background="@color/colorMain"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
