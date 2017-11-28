@@ -11,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/view"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
@@ -54,6 +57,7 @@
                     android:hint="카드번호 맨 뒷자리 4개"
                     android:lines="1"
                     android:maxLength="4"
+                    android:inputType="number"
                     android:background="@color/colorPrimary"/>
                 <TextView
                     android:layout_width="match_parent"
