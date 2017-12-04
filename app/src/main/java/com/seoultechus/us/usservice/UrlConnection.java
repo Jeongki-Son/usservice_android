@@ -162,6 +162,7 @@ public class UrlConnection {
                         JSONObject jsonObject = (JSONObject) _params;
                         connection.setRequestProperty("Content-Type", "application/json");
                         params = jsonObject.toString();
+                        Log.d(TAG, params);
                         Log.d(TAG, "httpsURLConnection() returned: " + "JsonObject");
                     } else {
                         params = LoganSquare.serialize(_params);
@@ -177,6 +178,35 @@ public class UrlConnection {
                 connection.setRequestMethod("GET");
             } else if (requestMethod == RequestMethod.PATCH) {
                 connection.setRequestMethod("PATCH");
+            } else if (requestMethod == RequestMethod.DELETE) {
+                connection.setDoOutput(true);
+                connection.setRequestMethod("DELETE");
+                DataOutputStream dataOutputStream;
+                String params;
+                if (_params.getClass().equals(String.class)) {
+                    params = (String) _params;
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    Log.d(TAG, "string");
+                } else if (_params.getClass().equals(ContentValues.class)) {
+                    //Content values doesn't use json as a request property
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    params = getString((ContentValues) _params);
+                    Log.d(TAG, "Content Values");
+                } else {
+                    if (_params.getClass().equals(JSONObject.class)) {
+                        JSONObject jsonObject = (JSONObject) _params;
+                        connection.setRequestProperty("Content-Type", "application/json");
+                        params = jsonObject.toString();
+                        Log.d(TAG, "httpsURLConnection() returned: " + "JsonObject");
+                    } else {
+                        params = LoganSquare.serialize(_params);
+                        Log.d(TAG, params);
+                        Log.d(TAG, "jsonObject");
+                    }
+                }
+                dataOutputStream = new DataOutputStream(connection.getOutputStream());
+                dataOutputStream.write(params.getBytes("UTF-8"));
+                dataOutputStream.close();
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
