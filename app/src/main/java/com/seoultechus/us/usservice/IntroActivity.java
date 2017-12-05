@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +32,9 @@ public class IntroActivity extends AppCompatActivity {
         currentUser = getSharedPreferences("currentUser", MODE_PRIVATE);
         final String token = currentUser.getString("token", "null");
 
+        String idByANDROID_ID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, idByANDROID_ID);
+        
         new UrlConnection()
                 .setUrl(AppData.getUser)
                 .setRequestMethod(UrlConnection.RequestMethod.POST)
