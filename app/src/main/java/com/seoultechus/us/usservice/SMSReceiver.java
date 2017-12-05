@@ -3,6 +3,7 @@ package com.seoultechus.us.usservice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.text.DateFormat;
 import android.icu.text.RelativeDateTimeFormatter;
 import android.icu.text.SimpleDateFormat;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by Son on 2017-11-15.
  */
@@ -39,6 +42,7 @@ public class SMSReceiver extends BroadcastReceiver {
     private Bundle bundle;
     private SmsMessage currentSMS;
     private String message;
+    private String phoneNumber;
 
     private String money;
     private String date;
@@ -47,8 +51,15 @@ public class SMSReceiver extends BroadcastReceiver {
     private Date dateTime;
     private String content;
 
+    private SharedPreferences currentUser;
+    private SharedPreferences.Editor editor;
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        currentUser = context.getSharedPreferences("currentUser", MODE_PRIVATE);
+        editor = currentUser.edit();
+
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d("onReceive()", "부팅완료");
         }
@@ -73,6 +84,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 for (Object aObject : pdu_Objects) {
                     currentSMS = getIncomingMessage(aObject, bundle);
                     message = currentSMS.getDisplayMessageBody(); // 문자 값
+                    phoneNumber = currentSMS.getDisplayOriginatingAddress();
 
                     money = getSmsData("([0-9]+|[0-9]{1,3}(,[0-9]{3})*)(.[0-9]{1,2})?원+", message).replace("원", "").replace(",", "");
                     String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
@@ -85,7 +97,10 @@ public class SMSReceiver extends BroadcastReceiver {
                     }
 
                     try {
-                        infoByCompany(message);
+                        String cardNumber = currentUser.getString("cardNumber", "");
+                        String modifiedCardNumber = cardNumber.substring(0,1)+"*"+cardNumber.substring(2,3)+"*";
+                        if(message.contains(modifiedCardNumber))
+                            infoByCompany(message, phoneNumber);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -107,29 +122,29 @@ public class SMSReceiver extends BroadcastReceiver {
         return currentSMS;
     }
 
-    private void infoByCompany(String message) throws IOException {
+    private void infoByCompany(String message, String PhoneNumber) throws IOException {
         List<String> messageList = divideSmsData(message);
         String companyName = messageList.get(1).substring(0,2);
         String content = messageList.get(5);
 
-        switch (companyName)
+        switch (PhoneNumber)
         {
-            case "신한":
+            case "15447200":
                 Log.d(TAG, "신한");
                 content = messageList.get(6);
                 if (messageList.size() > 7)
                     content = content+" "+messageList.get(7);
                 Log.d(TAG, content);
                 break;
-            case "NH":
+            case "15881600":
                 Log.d(TAG, "NH");
                 Log.d(TAG, content);
                 break;
-            case "우리":
+            case "15889955":
                 Log.d(TAG, "우리");
                 Log.d(TAG, content);
                 break;
-            case "KB":
+            case "15881688":
                 Log.d(TAG, "KB");
                 content = content.replace(" 사용", "");
                 Log.d(TAG, content.replace(" 사용", ""));
@@ -138,9 +153,11 @@ public class SMSReceiver extends BroadcastReceiver {
 
         Receipt.currentReceipt = new Receipt();
         Receipt.currentReceipt.category = "출금";
+        Receipt.currentReceipt.user_id = currentUser.getInt("UID", 0);
         Receipt.currentReceipt.pay_date = dateTime;
         Receipt.currentReceipt.amount = Integer.parseInt(money);
         Receipt.currentReceipt.content = content;
+        Receipt.currentReceipt.card_id = currentUser.getInt("CID", 0);
         Log.d(TAG, String.valueOf(Receipt.currentReceipt.category));
         new UrlConnection()
                 .setUrl(AppData.postReceipt)
@@ -152,6 +169,22 @@ public class SMSReceiver extends BroadcastReceiver {
                         return null;
                     }
                 }).execute();
+
+        try
+        {
+            MainActivity.smsMoneyTextView.setText(getSmsData("([0-9]+|[0-9]{1,3}(,[0-9]{3})*)(.[0-9]{1,2})?원+", message));
+            MainActivity.smsTimeTextView.setText(getSmsData("([0-9]{1,2})/([0-9]{1,2})", message) + " " + time);
+            MainActivity.smsContentTextView.setText(content);
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, e.getMessage());
+        }
+
+        editor.putString("money", getSmsData("([0-9]+|[0-9]{1,3}(,[0-9]{3})*)(.[0-9]{1,2})?원+", message));
+        editor.putString("time", getSmsData("([0-9]{1,2})/([0-9]{1,2})", message) + " " + time);
+        editor.putString("content", content);
+        editor.commit();
 
     }
 

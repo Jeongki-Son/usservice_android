@@ -5,7 +5,7 @@ package com.seoultechus.us.usservice;
  */
 
 public class AppData {
-    public static final String host = "https://usservice-cloned-ghkdgh2365.c9users.io";
+    public static final String host = "https://usservice.herokuapp.com";
 
     // user routes
     public static final String getUser = host + "/api/v1/sessions/verify";

@@ -21,6 +21,10 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
     public String TAG = "LoginActivity2";
+
+    private final long FINISH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
+
     private Intent intent;
     private EditText userEmailEditText;
     private EditText passwordEditText;
@@ -42,6 +46,23 @@ public class LoginActivity extends AppCompatActivity {
         initData();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
+        {
+            super.onBackPressed();
+        }
+        else
+        {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "한번 더 뒤로가기를 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void initData() {
         userEmailEditText = (EditText) findViewById(R.id.userid_login);
@@ -100,8 +121,12 @@ public class LoginActivity extends AppCompatActivity {
                                             @Override
                                             public JSONObject onComplete(JSONObject response) throws IOException, JSONException {
                                                 status = response.getString("info");
-                                                if (status.equals("card exist"))
+                                                if (status.equals("card exist")) {
                                                     intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                    editor.putString("cardCompany", response.getString("cardCompany"));
+                                                    editor.putString("cardNumber", response.getString("cardNumber"));
+                                                    editor.commit();
+                                                }
                                                 else
                                                     intent = new Intent(LoginActivity.this, CardActivity.class);
                                                 startActivity(intent);
