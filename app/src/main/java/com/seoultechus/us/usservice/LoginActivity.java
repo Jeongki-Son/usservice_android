@@ -22,7 +22,7 @@ import java.io.IOException;
 public class LoginActivity extends AppCompatActivity {
     public String TAG = "LoginActivity2";
     private Intent intent;
-    private EditText useremailEditText;
+    private EditText userEmailEditText;
     private EditText passwordEditText;
 
     private Button userLoginButton;
@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        useremailEditText = (EditText) findViewById(R.id.userid_login);
+        userEmailEditText = (EditText) findViewById(R.id.userid_login);
         passwordEditText = (EditText) findViewById(R.id.password_login);
         userLoginButton = (Button) findViewById(R.id.login_login);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar_login);
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         currentUser = getSharedPreferences("currentUser", MODE_PRIVATE);
         editor = currentUser.edit();
 
-        useremailEditText.setText("ghkdgh2365@naver.com");
+        userEmailEditText.setText("ghkdgh2365@naver.com");
         passwordEditText.setText("12345678");
 
         userLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -64,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject user = new JSONObject();
                 try {
                     jsonObject.put("user", user);
-                    user.put("email", useremailEditText.getText().toString());
+                    user.put("email", userEmailEditText.getText().toString());
                     user.put("password", passwordEditText.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, String.valueOf(new Params().add("email",useremailEditText.getText().toString()).add("password",passwordEditText.getText().toString())));
+                Log.d(TAG, String.valueOf(new Params().add("email",userEmailEditText.getText().toString()).add("password",passwordEditText.getText().toString())));
                 new UrlConnection()
                         .setUrl(AppData.postSession)
                         .setRequestMethod(UrlConnection.RequestMethod.POST)
