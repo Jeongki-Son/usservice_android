@@ -26,15 +26,31 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     public String TAG = "MainActivity2";
+
+    private final long FINISH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
+
     private ImageView backButton;
     private TextView appBarTitle;
     private ImageView logoutButton;
     private SharedPreferences currentUser;
 
+    private String cardCompany;
+    private String cardNumber;
+
+    private TextView cardCompanyTextView;
+    private TextView cardNumberTextView;
+    public static TextView smsMoneyTextView;
+    public static TextView smsTimeTextView;
+    public static TextView smsContentTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cardCompany = getIntent().getStringExtra("card_company");
+        cardNumber = getIntent().getStringExtra("card_number");
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
         if(permissionCheck == PackageManager.PERMISSION_GRANTED){
@@ -50,6 +66,21 @@ public class MainActivity extends AppCompatActivity {
 
         currentUser = getSharedPreferences("currentUser", MODE_PRIVATE);
         final String token = currentUser.getString("token", "null");
+
+        if(cardCompany == null)
+        {
+            cardCompany = currentUser.getString("cardCompany", "");
+            cardNumber = currentUser.getString("cardNumber", "");
+        }
+
+        cardCompanyTextView = (TextView) findViewById(R.id.tv_card_company);
+        cardNumberTextView = (TextView) findViewById(R.id.tv_card_number);
+        smsMoneyTextView = (TextView) findViewById(R.id.tv_sms_money);
+        smsTimeTextView = (TextView) findViewById(R.id.tv_sms_time);
+        smsContentTextView = (TextView) findViewById(R.id.tv_sms_content);
+
+        cardCompanyTextView.setText(cardCompany);
+        cardNumberTextView.setText(cardNumber);
 
         appBarTitle = (TextView) findViewById(R.id.app_bar_title);
         appBarTitle.setText("문자 정보");
@@ -92,6 +123,28 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+        if(currentUser.getString("money", "") != null)
+        {
+            smsMoneyTextView.setText(currentUser.getString("money", "사용되지 않음"));
+            smsTimeTextView.setText(currentUser.getString("time", "사용되지 않음"));
+            smsContentTextView.setText(currentUser.getString("content", "사용되지 않음"));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
+        {
+            super.onBackPressed();
+        }
+        else
+        {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "한번 더 뒤로가기를 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

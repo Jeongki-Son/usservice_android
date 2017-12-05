@@ -36,8 +36,7 @@
                     android:padding="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentLeft="true"
-                    android:src="@drawable/ic_arrow_back"/>
+                    android:layout_alignParentLeft="true"/>
                 <ImageView
                     android:id="@+id/btn_logout"
                     android:padding="16dp"
