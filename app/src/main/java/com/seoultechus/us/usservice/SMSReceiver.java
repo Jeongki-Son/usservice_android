@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.telephony.SmsMessage;
 import android.util.Log;
-
 import com.bluelinelabs.logansquare.LoganSquare;
 
 import org.json.JSONException;
